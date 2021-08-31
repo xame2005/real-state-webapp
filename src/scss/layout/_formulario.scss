@@ -1,8 +1,9 @@
 .formulario {
   p {
-    font-size: 0.4rem;
+    font-size: 2rem;
     color: $grisOscuro;
     margin: 2rem 0 0 0;
+    font-weight: $bold;
   }
 
   legend {
@@ -26,6 +27,10 @@
     border: 1px solid $gris;
     border-radius: 1rem;
     margin-bottom: 2rem;
+  }
+
+  textarea {
+    height: 20rem;
   }
 
   .forma-contacto {
