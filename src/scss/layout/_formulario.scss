@@ -15,6 +15,7 @@
     font-weight: $bold;
     text-transform: uppercase;
     display: block;
+    color: $grisOscuro;
   }
 
   input:not([type="submit"]),
@@ -43,5 +44,9 @@
   input[type="radio"] {
     margin: 0;
     width: auto;
+  }
+
+  option {
+    color: $grisOscuro;
   }
 }
