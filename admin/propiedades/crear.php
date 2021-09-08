@@ -33,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $vendedorId = mysqli_real_escape_string($db, $_POST["vendedorId"]);
     $creado = date("Y/m/d");
 
+    //Asignar files a una variable
+    $imagen = $_FILES["imagen"];
+
     if (!$titulo) {
         $errores[] = "El campo título no puede estar vacío";
     }
@@ -59,17 +62,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $errores[] = "Elige un vendedor";
     }
 
+    if (!$imagen["name"] || $imagen["error"]) {
+        $errores[] = "La imagen es obligatoria";
+    }
+
+    //Validar el tamaño de la imagen (100kb Max)
+    $medida = 1000 * 1000;
+
+    if ($imagen["size"] > $medida) {
+        $errores[] = "La imagen es muy pesada, el tamaño máximo es de 100 KB";
+    }
+
     //Validar que el arreglo de errores esté vacío
     if (empty($errores)) {
+        //SUBIR ARCHIVOS
+
+        //Crear carpetas con ruta relativa
+        $carpetaImagenes = "../../imagenes/";
+        if (!is_dir($carpetaImagenes)) {
+            mkdir($carpetaImagenes);
+        }
+
+        //Generar nombre único para la imagen
+        $nombreImagen = md5(uniqid(rand(), true)) . ".jpg";
+
+        //Subir la imagen
+        move_uploaded_file($imagen["tmp_name"], $carpetaImagenes . $nombreImagen);
+
         //Insertar en la base de datos
-        $query = "INSERT INTO propiedades (titulo, precio, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VALUES ('$titulo', '$precio', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId');";
+        $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) VALUES ('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId');";
         var_dump($query);
 
         $resultado = mysqli_query($db, $query);
         var_dump($resultado);
 
         if ($resultado) {
-            header("Location: /admin");
+            header("Location: /admin?resultado=1");
         }
     }
 }
@@ -91,7 +119,7 @@ incluirTemplate("header")
         </div>
     <?php endforeach; ?>
 
-    <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php">
+    <form action="" class="formulario" method="POST" action="/admin/propiedades/crear.php" enctype="multipart/form-data">
         <fieldset>
             <legend>Información General</legend>
 
