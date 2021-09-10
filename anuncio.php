@@ -1,46 +1,57 @@
 <?php
+$id = $_GET["id"];
+$id = filter_var($id, FILTER_VALIDATE_INT);
+var_dump($id);
+
+if (!$id) {
+  header("Location: /");
+}
+//Importar la conexión
+require "includes/config/database.php";
+$db = conectarDB();
+
+//Realizar el query
+$query = "SELECT * FROM propiedades WHERE id = ${id}";
+
+//Obtener el resultado
+$resultado = mysqli_query($db, $query);
+var_dump($resultado);
+if ($resultado->num_rows === 0) {
+  header("Location: /");
+}
+$propiedad = mysqli_fetch_assoc($resultado);
+
 require "includes/funciones.php";
 incluirTemplate("header")
 ?>
 
-<main class="contenedor seccion contenido-centrado">
-  <h1>Casa en Venta frente al Bosque</h1>
 
-  <picture>
-    <source srcset="build/img/destacada.webp" type="image/webp" />
-    <source srcset="build/img/destacada.jpg" type="image/jpeg" />
-    <img loading="lazy" src="build/img/destacada.jpg" alt="Imagen Destacada" />
-  </picture>
+<main class="contenedor seccion contenido-centrado">
+  <h1><?php echo $propiedad["titulo"]; ?></h1>
+
+  <img loading="lazy" src="/imagenes/<?php echo $propiedad["imagen"]; ?>" alt="Imagen Destacada" />
 
   <div class="resumen-propiedad">
-    <p class="precio">$2,500,000</p>
+    <p class="precio">$<?php echo $propiedad["precio"]; ?></p>
 
     <ul class="iconos-caracteristicas">
       <li>
         <img class="icono" src="build/img/icono_wc.svg" alt="Icono WC" />
-        <p>3</p>
+        <p><?php echo $propiedad["wc"]; ?></p>
       </li>
 
       <li>
         <img class="icono" src="build/img/icono_estacionamiento.svg" alt="Icono Estacionamiento" />
-        <p>3</p>
+        <p><?php echo $propiedad["estacionamiento"]; ?></p>
       </li>
 
       <li>
         <img class="icono" src="build/img/icono_dormitorio.svg" alt="Icono dormitorio" />
-        <p>4</p>
+        <p><?php echo $propiedad["habitaciones"]; ?></p>
       </li>
     </ul>
 
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique
-      consequuntur nihil, aspernatur dolore alias mollitia vitae numquam a
-      ut deleniti soluta temporibus quis magnam necessitatibus eos at ipsum
-      nam iste? Ipsa illo vero at? Modi non nobis expedita. Tempore
-      veritatis illum asperiores temporibus minima? Optio, hic cupiditate.
-      Eligendi repellendus rem voluptatibus quaerat, deserunt cum
-      exercitationem sequi porro ea rerum quam!
-    </p>
+    <p><?php echo $propiedad["descripcion"]; ?></p>
 
     <p>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis
@@ -51,4 +62,8 @@ incluirTemplate("header")
   </div>
 </main>
 
-<?php incluirTemplate("footer") ?>
+<?php
+//Cerrar la conexión
+mysqli_close($db);
+incluirTemplate("footer")
+?>
