@@ -13,7 +13,7 @@ incluirTemplate("header")
     <img loading="lazy" src="build/im/destacada3.jpg" alt="Imagen Contacto" />
   </picture>
 
-  <h2>Llene el Fromulario de Contacto</h2>
+  <h2>Llene el Formulario de Contacto</h2>
 
   <form action="" class="formulario">
     <fieldset>
